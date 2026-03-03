@@ -1,4 +1,5 @@
 import Login from "./pages/Login"
+import Home from "./pages/Home"
 import Dashboard from "./pages/Dashboard"
 import { useEffect, useState } from "react"
 import { supabase } from "./services/supabaseClient"
@@ -37,7 +38,7 @@ function App() {
 
   // si NO hay sesión  mostrar login
   if (!session) {
-    return <Login />
+    return <Home />
   }
 
   // si hay sesión  mostrar dashboard provisional

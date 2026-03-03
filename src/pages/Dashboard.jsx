@@ -1,4 +1,5 @@
 import { supabase } from "../services/supabaseClient"
+import Menu from "./Menu"
 
 function Dashboard({ session }) {
 
@@ -17,7 +18,10 @@ function Dashboard({ session }) {
         className="mt-6 bg-red-500 px-4 py-2 rounded"
       >
         Cerrar sesión
+    
       </button>
+
+      <Menu session={session} />
     </div>
   )
 }
