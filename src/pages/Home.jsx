@@ -14,7 +14,7 @@ function Home() {
         <Login />
       </div>
 
-      <Menu session={null} />
+      <Menu session={null} rol={null}/>
 
     </div>
   )

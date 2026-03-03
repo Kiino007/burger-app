@@ -1,7 +1,33 @@
+import { useEffect, useState } from "react"
 import { supabase } from "../services/supabaseClient"
 import Menu from "./Menu"
 
 function Dashboard({ session }) {
+
+    const [rol, setRol] = useState(null)
+
+    useEffect(() => {
+    const fetchRol = async () => {
+      const { data, error } = await supabase
+        .from("perfiles")
+        .select("rol")
+        .eq("user_id", session.user.id)
+        .single()
+
+      if (error) {
+      console.log("Error trayendo rol:", error)
+      return
+      }
+
+      if (data) {
+        setRol(data.rol)
+      } else {
+      setRol("cliente")
+      }
+    }
+
+    fetchRol()
+  }, [session])
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -13,15 +39,18 @@ function Dashboard({ session }) {
         Usuario autenticado: {session.user.email}
       </p>
 
+      <p className="mt-2">
+        Rol: {rol}
+      </p>
+
       <button
         onClick={() => supabase.auth.signOut()}
         className="mt-6 bg-red-500 px-4 py-2 rounded"
       >
         Cerrar sesión
-    
       </button>
 
-      <Menu session={session} />
+      <Menu session={session} rol={rol} />
     </div>
   )
 }
