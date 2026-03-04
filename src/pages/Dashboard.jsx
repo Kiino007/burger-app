@@ -30,27 +30,31 @@ function Dashboard({ session }) {
   }, [session])
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold text-yellow-400">
-        Bienvenido 🍔
-      </h1>
+    <div className="min-h-screen bg-burger text-white">
+      
+      {/* Contenedor para centrar el contenido y que no pegue a los bordes */}
+      <div className="max-w-7xl mx-auto p-6">
+        <header className="flex justify-between items-center mb-10">
+          <div>
+            <h1 className="text-3xl font-black text-yellow-400 uppercase tracking-tighter">
+              Panel de {rol === 'admin' ? 'Administrador' : 'Cliente'}
+            </h1>
+            <p className="text-green-400 text-sm italic font-bold">
+              ¡10% de descuento aplicado automáticamente!
+            </p>
+          </div>
+          
+          <button 
+            onClick={() => supabase.auth.signOut()}
+            className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-xl text-xs font-black uppercase transition-all shadow-lg"
+          >
+            Cerrar Sesión
+          </button>
+        </header>
 
-      <p className="mt-4">
-        Usuario autenticado: {session.user.email}
-      </p>
-
-      <p className="mt-2">
-        Rol: {rol}
-      </p>
-
-      <button
-        onClick={() => supabase.auth.signOut()}
-        className="mt-6 bg-red-500 px-4 py-2 rounded"
-      >
-        Cerrar sesión
-      </button>
-
-      <Menu session={session} rol={rol} />
+        {/* El Menú ya tiene el estilo Glassmorphism que configuramos antes */}
+        <Menu session={session} rol={rol} />
+      </div>
     </div>
   )
 }

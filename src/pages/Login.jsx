@@ -70,9 +70,9 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-      <div className="bg-gray-800 p-8 rounded-xl w-full max-w-md border border-gray-700 shadow-2xl">
-        
+    <div className="bg-transparent"> 
+    <div className="bg-gray-800/80 p-6 rounded-2xl w-full max-w-sm border border-gray-700 shadow-2xl backdrop-blur-sm">
+
         {isRegistering ? (
           <div className="space-y-6">
             <h2 className="text-3xl font-bold text-green-400 text-center uppercase">Crear Cuenta</h2>

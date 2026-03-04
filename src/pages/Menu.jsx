@@ -20,14 +20,16 @@ function Menu({ session, rol }) {
     if (!error) setHamburguesas(data)
     setLoading(false)
   }
+
   const prepararEdicion = (burger) => {
-   setEditandoId(burger.id)
+    setEditandoId(burger.id)
     setFormEdit({ 
       nombre: burger.nombre, 
       descripcion: burger.descripcion, 
       precio: burger.precio 
     })
   }
+
   const actualizarHamburguesa = async (e) => {
     e.preventDefault()
     const { error } = await supabase
@@ -42,14 +44,12 @@ function Menu({ session, rol }) {
     if (error) {
       alert("Error al actualizar: " + error.message)
     } else {
-      // Refrescamos la lista localmente
       setHamburguesas(hamburguesas.map(b => b.id === editandoId ? { ...b, ...formEdit, precio: parseInt(formEdit.precio) } : b))
-      setEditandoId(null) // Cerramos el modo edición
+      setEditandoId(null)
       alert("¡Actualizada correctamente!")
     }
   }
 
-  // --- LÓGICA DE ADMIN: AGREGAR ---
   const agregarHamburguesa = async () => {
     const nombre = prompt("Nombre de la hamburguesa:")
     const descripcion = prompt("Descripción:")
@@ -70,7 +70,6 @@ function Menu({ session, rol }) {
     }
   }
 
-  // --- LÓGICA DE ADMIN: ELIMINAR ---
   const eliminarHamburguesa = async (id) => {
     const confirmar = window.confirm("¿Estás seguro de eliminar esta hamburguesa?")
     if (!confirmar) return
@@ -88,85 +87,81 @@ function Menu({ session, rol }) {
     }
   }
 
-  if (loading) return <div className="text-white text-center mt-10">Cargando menú...</div>
+  if (loading) return <div className="text-white text-center mt-10 font-bold">Cargando menú...</div>
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-8">
+    /* Contenedor sin fondo sólido para que se vea la imagen de App/Home */
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 md:p-8">
       {hamburguesas.map((burger) => {
-        
-        // REGLA: 10% de descuento solo si hay sesión (usuario ingresado)
         const tieneSesion = session !== null
         const precioOriginal = burger.precio
-        const precioFinal = tieneSesion 
-          ? Math.round(precioOriginal * 0.90) 
-          : precioOriginal
+        const precioFinal = tieneSesion ? Math.round(precioOriginal * 0.90) : precioOriginal
 
         if (editandoId === burger.id) {
           return (
-            <form key={burger.id} onSubmit={actualizarHamburguesa} className="bg-gray-700 border-2 border-yellow-500 p-6 rounded-2xl text-white space-y-3 shadow-2xl scale-105 transition-transform">
-              <h3 className="text-yellow-400 font-bold">Editando Hamburguesa</h3>
+            <form key={burger.id} onSubmit={actualizarHamburguesa} className="bg-gray-900/80 backdrop-blur-md border-2 border-yellow-500 p-6 rounded-3xl text-white space-y-3 shadow-2xl">
+              <h3 className="text-yellow-400 font-bold uppercase text-center">Modificar Item</h3>
               <input 
-                className="w-full p-2 rounded bg-gray-800 border border-gray-600 text-sm focus:border-yellow-500 outline-none"
+                className="w-full p-2 rounded-lg bg-gray-800/50 border border-gray-600 text-sm outline-none"
                 value={formEdit.nombre}
                 onChange={(e) => setFormEdit({...formEdit, nombre: e.target.value})}
-                placeholder="Nombre" required
+                required
               />
               <textarea 
-                className="w-full p-2 rounded bg-gray-800 border border-gray-600 text-sm focus:border-yellow-500 outline-none"
+                className="w-full p-2 rounded-lg bg-gray-800/50 border border-gray-600 text-sm outline-none"
                 value={formEdit.descripcion}
                 onChange={(e) => setFormEdit({...formEdit, descripcion: e.target.value})}
-                placeholder="Descripción"
               />
               <input 
                 type="number"
-                className="w-full p-2 rounded bg-gray-800 border border-gray-600 text-sm focus:border-yellow-500 outline-none"
+                className="w-full p-2 rounded-lg bg-gray-800/50 border border-gray-600 text-sm outline-none"
                 value={formEdit.precio}
                 onChange={(e) => setFormEdit({...formEdit, precio: e.target.value})}
-                placeholder="Precio" required
+                required
               />
-              <div className="flex gap-2">
-                <button type="submit" className="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded text-xs font-bold uppercase transition-colors">Guardar</button>
-                <button type="button" onClick={() => setEditandoId(null)} className="flex-1 bg-gray-500 hover:bg-gray-600 py-2 rounded text-xs font-bold uppercase transition-colors">Cancelar</button>
+              <div className="flex gap-2 pt-2">
+                <button type="submit" className="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded-xl text-xs font-bold uppercase transition-all">Guardar</button>
+                <button type="button" onClick={() => setEditandoId(null)} className="flex-1 bg-gray-500 hover:bg-gray-600 py-2 rounded-xl text-xs font-bold uppercase transition-all">Cancelar</button>
               </div>
             </form>
           )
         }
 
         return (
-          <div key={burger.id} className="bg-gray-800 border border-gray-700 p-6 rounded-2xl text-white relative flex flex-col justify-between">
+          /* ESTILO GLASSMORPhISM: Fondo semitransparente con desenfoque */
+          <div key={burger.id} className="group bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-3xl text-white relative flex flex-col justify-between hover:bg-white/20 transition-all duration-300 shadow-xl">
             
             <div>
               {tieneSesion && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-lg">
-                  OFERTA -10%
+                <span className="absolute -top-3 -right-2 bg-yellow-500 text-black text-[10px] px-3 py-1 rounded-full font-black shadow-lg">
+                  10% OFF
                 </span>
               )}
 
-              <h2 className="text-xl font-bold text-yellow-400">{burger.nombre}</h2>
-              <p className="mt-2 text-gray-400 text-sm italic">{burger.descripcion}</p>
+              <h2 className="text-xl font-black text-yellow-400 uppercase tracking-tighter">{burger.nombre}</h2>
+              <p className="mt-2 text-gray-200 text-xs font-medium leading-relaxed opacity-80">{burger.descripcion}</p>
 
-              <div className="mt-4 flex items-baseline gap-2">
-                <span className="text-2xl font-bold">${precioFinal.toLocaleString()}</span>
+              <div className="mt-4 flex items-center gap-3">
+                <span className="text-2xl font-black">${precioFinal.toLocaleString()}</span>
                 {tieneSesion && (
-                  <span className="text-gray-500 line-through text-sm">${precioOriginal.toLocaleString()}</span>
+                  <span className="text-white/40 line-through text-sm font-bold">${precioOriginal.toLocaleString()}</span>
                 )}
               </div>
             </div>
 
-            {/* BOTONES DE ACCIÓN ADMIN */}
             {rol === 'admin' && (
-              <div className="mt-6 flex gap-2 border-t border-gray-700 pt-4">
+              <div className="mt-6 flex gap-2 border-t border-white/10 pt-4">
                 <button 
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 rounded font-bold uppercase"
-                onClick={() => prepararEdicion(burger)}
+                  className="flex-1 bg-blue-600/80 hover:bg-blue-600 text-white text-[10px] py-2 rounded-xl font-black uppercase transition-all"
+                  onClick={() => prepararEdicion(burger)}
                 >
-                Editar
+                  Editar
                 </button>
                 <button 
                   onClick={() => eliminarHamburguesa(burger.id)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs py-2 rounded font-bold uppercase"
+                  className="flex-1 bg-red-600/80 hover:bg-red-600 text-white text-[10px] py-2 rounded-xl font-black uppercase transition-all"
                 >
-                  Eliminar
+                  Borrar
                 </button>
               </div>
             )}
@@ -174,13 +169,12 @@ function Menu({ session, rol }) {
         )
       })}
 
-      {/* BOTÓN DE AGREGAR (SOLO ADMIN) */}
       {rol === 'admin' && (
         <div 
           onClick={agregarHamburguesa}
-          className="border-2 border-dashed border-gray-700 rounded-2xl flex items-center justify-center p-6 hover:border-yellow-500 cursor-pointer transition-colors group"
+          className="border-2 border-dashed border-white/30 rounded-3xl flex items-center justify-center p-6 hover:border-yellow-500 hover:bg-yellow-500/10 cursor-pointer transition-all group"
         >
-           <span className="text-gray-500 group-hover:text-yellow-500 font-bold text-lg">+ Agregar Nueva</span>
+          <span className="text-white/50 group-hover:text-yellow-500 font-black text-sm uppercase tracking-widest">+ Agregar Nueva</span>
         </div>
       )}
     </div>
